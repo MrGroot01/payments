@@ -29,7 +29,7 @@ rzp_client = razorpay.Client(
 # CREATE ORDER
 # ───────────────────────────────────────────────
 class CreateOrderView(APIView):
-    permission_classes = [AllowAny]   # ✅ FIXED
+    permission_classes = [AllowAny]
 
     def post(self, request):
         ser = CreateOrderSerializer(data=request.data)
@@ -56,8 +56,11 @@ class CreateOrderView(APIView):
             logger.error("Razorpay error: %s", exc)
             return Response({"detail": "Payment error"}, status=500)
 
-        # ⚠️ No user (since no auth)
+        # ✅ FIX: handle user safely
+        user = request.user if request.user.is_authenticated else None
+
         order = Order.objects.create(
+            user=user,   # ✅ IMPORTANT FIX
             amount=total,
             currency="INR",
             status="PENDING",
@@ -76,7 +79,7 @@ class CreateOrderView(APIView):
             )
 
         return Response({
-            "order_id": order.id,
+            "order_id": str(order.id),   # ✅ better for frontend
             "razorpay_order_id": rzp_order["id"],
             "amount": amount_paise,
             "currency": "INR",
