@@ -15,7 +15,7 @@ class Order(models.Model):
     ]
 
     id            = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user          = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders",null=True,blank=True)
+    user          = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
     amount        = models.DecimalField(max_digits=10, decimal_places=2)   # in INR
     currency      = models.CharField(max_length=10, default="INR")
     status        = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")
