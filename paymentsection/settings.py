@@ -1,14 +1,14 @@
 from pathlib import Path
 import os
 
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 # BASE DIR
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 # SECURITY
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "unsafe-secret-key")
 
 DEBUG = os.environ.get("DEBUG", "True") == "True"
@@ -19,16 +19,15 @@ ALLOWED_HOSTS = [
     ".onrender.com",
 ]
 
-# ────────────────────────────────────────────────────────────────
-# RAZORPAY KEYS (FIXED ✅)
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
+# RAZORPAY KEYS
+# ───────────────────────────────────────────────
 RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")
 
-
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 # APPLICATIONS
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -45,16 +44,16 @@ INSTALLED_APPS = [
     "payments",
 ]
 
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 # MIDDLEWARE
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
 
-    # Disable CSRF for APIs if needed
+    # ⚠️ Keep CSRF disabled for APIs
     # 'django.middleware.csrf.CsrfViewMiddleware',
 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -62,9 +61,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ────────────────────────────────────────────────────────────────
-# CORS (VERY IMPORTANT)
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
+# CORS SETTINGS (VERY IMPORTANT)
+# ───────────────────────────────────────────────
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:3000",
@@ -78,14 +77,23 @@ CORS_ALLOW_HEADERS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
+# REST FRAMEWORK (REMOVE AUTH ISSUE ✅)
+# ───────────────────────────────────────────────
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny"
+    ]
+}
+
+# ───────────────────────────────────────────────
 # URLS
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 ROOT_URLCONF = 'paymentsection.urls'
 
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 # TEMPLATES
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -103,9 +111,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'paymentsection.wsgi.application'
 
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 # DATABASE
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -113,9 +121,9 @@ DATABASES = {
     }
 }
 
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 # PASSWORD VALIDATION
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -123,22 +131,22 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 # INTERNATIONALIZATION
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 # STATIC FILES
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
 STATIC_URL = 'static/'
 
-# ────────────────────────────────────────────────────────────────
-# LOGGING (DEBUGGING WEBHOOKS)
-# ────────────────────────────────────────────────────────────────
+# ───────────────────────────────────────────────
+# LOGGING
+# ───────────────────────────────────────────────
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
