@@ -1,6 +1,6 @@
 from pathlib import Path
 import os
-import dj_database_url
+
 
 # ───────────────────────────────────────────────
 # BASE DIR
@@ -117,9 +117,10 @@ WSGI_APPLICATION = 'paymentsection.wsgi.application'
 # DATABASE
 # ───────────────────────────────────────────────
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get("DATABASE_URL")
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '/tmp/db.sqlite3',
+    }
 }
 
 # ───────────────────────────────────────────────
