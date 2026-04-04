@@ -1,7 +1,6 @@
 from pathlib import Path
 import os
 
-
 # ───────────────────────────────────────────────
 # BASE DIR
 # ───────────────────────────────────────────────
@@ -37,11 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Third-party
     "corsheaders",
     "rest_framework",
 
-    # Local
     "payments",
 ]
 
@@ -54,7 +51,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
 
-    # ⚠️ Keep CSRF disabled for APIs
+    # CSRF disabled for API usage
     # 'django.middleware.csrf.CsrfViewMiddleware',
 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -63,7 +60,7 @@ MIDDLEWARE = [
 ]
 
 # ───────────────────────────────────────────────
-# CORS SETTINGS (VERY IMPORTANT)
+# CORS SETTINGS
 # ───────────────────────────────────────────────
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
@@ -79,13 +76,13 @@ CORS_ALLOW_HEADERS = [
 CORS_ALLOW_CREDENTIALS = True
 
 # ───────────────────────────────────────────────
-# REST FRAMEWORK (REMOVE AUTH ISSUE ✅)
+# REST FRAMEWORK
 # ───────────────────────────────────────────────
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny"
     ],
-     "DEFAULT_AUTHENTICATION_CLASSES": []
+    "DEFAULT_AUTHENTICATION_CLASSES": []
 }
 
 # ───────────────────────────────────────────────
@@ -114,7 +111,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'paymentsection.wsgi.application'
 
 # ───────────────────────────────────────────────
-# DATABASE
+# DATABASE (FIXED FOR RENDER)
 # ───────────────────────────────────────────────
 DATABASES = {
     'default': {
@@ -142,9 +139,12 @@ USE_I18N = True
 USE_TZ = True
 
 # ───────────────────────────────────────────────
-# STATIC FILES
+# STATIC FILES (FINAL FIX 🔥)
 # ───────────────────────────────────────────────
 STATIC_URL = 'static/'
+
+# ✅ VERY IMPORTANT (fixes your error)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # ───────────────────────────────────────────────
 # LOGGING
