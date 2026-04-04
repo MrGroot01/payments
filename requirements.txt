@@ -12,4 +12,3 @@ requests==2.33.1
 sqlparse==0.5.5
 tzdata==2026.1
 urllib3==2.6.3
-razorpay==1.4.1
