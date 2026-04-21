@@ -53,7 +53,8 @@ class OrderItem(models.Model):
         return self.price * self.quantity
 
     def __str__(self):
-        return f"{self.name} x{self.quantity} in Order {self.order.id}"
+        username = self.user.username if self.user else "Guest"
+        return f"Order {self.id} | {username} | ₹{self.amount} | {self.status}"
 
 
 class PaymentWebhookLog(models.Model):
