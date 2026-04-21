@@ -15,10 +15,22 @@ from .models import Order, OrderItem
 
 logger = logging.getLogger(__name__)
 
-# Razorpay client
-rzp_client = razorpay.Client(
-    auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET)
-)
+
+# ───────────────────────────────────────────────
+# 🔥 CREATE RAZORPAY CLIENT SAFELY (FIXED)
+# ───────────────────────────────────────────────
+def get_razorpay_client():
+    key_id = settings.RAZORPAY_KEY_ID
+    key_secret = settings.RAZORPAY_KEY_SECRET
+
+    print("🔑 KEY ID:", key_id)
+    print("🔑 KEY SECRET:", key_secret)
+
+    if not key_id or not key_secret:
+        raise Exception("Razorpay keys not configured")
+
+    return razorpay.Client(auth=(key_id, key_secret))
+
 
 # ───────────────────────────────────────────────
 # CREATE ORDER
@@ -37,11 +49,9 @@ class CreateOrderView(APIView):
             latitude = data.get("latitude")
             longitude = data.get("longitude")
 
-            # ✅ FIX: Check items properly
-            if not items or len(items) == 0:
+            if not items:
                 return Response({"error": "Cart is empty"}, status=400)
 
-            # ✅ Calculate total
             subtotal = sum(
                 float(item.get("price", 0)) * int(item.get("quantity", item.get("qyt", 1)))
                 for item in items
@@ -50,17 +60,18 @@ class CreateOrderView(APIView):
             total = subtotal + delivery_charge
             amount_paise = int(total * 100)
 
-            # ✅ Create Razorpay order
+            # 🔥 FIX: create client here (not globally)
+            rzp_client = get_razorpay_client()
+
+            # 🔥 Razorpay order
             rzp_order = rzp_client.order.create({
                 "amount": amount_paise,
                 "currency": "INR",
                 "payment_capture": 1,
             })
 
-            # ✅ Handle user safely
             user = request.user if request.user.is_authenticated else None
 
-            # ✅ Create DB Order
             order = Order.objects.create(
                 user=user,
                 amount=total,
@@ -73,7 +84,6 @@ class CreateOrderView(APIView):
                 longitude=longitude,
             )
 
-            # ✅ Save items safely
             for item in items:
                 OrderItem.objects.create(
                     order=order,
@@ -112,14 +122,13 @@ class VerifyPaymentView(APIView):
             razorpay_payment_id = data.get("razorpay_payment_id")
             razorpay_signature = data.get("razorpay_signature")
 
-            # ✅ FIX: validate input
             if not razorpay_order_id:
                 return Response({"error": "Invalid order id"}, status=400)
 
             order = Order.objects.get(razorpay_order_id=razorpay_order_id)
 
-            # ✅ Verify signature
             payload = f"{razorpay_order_id}|{razorpay_payment_id}"
+
             expected_signature = hmac.new(
                 settings.RAZORPAY_KEY_SECRET.encode(),
                 payload.encode(),
@@ -131,7 +140,6 @@ class VerifyPaymentView(APIView):
                 order.save()
                 return Response({"error": "Payment verification failed"}, status=400)
 
-            # ✅ Success
             order.status = "SUCCESS"
             order.razorpay_payment_id = razorpay_payment_id
             order.razorpay_signature = razorpay_signature
@@ -148,7 +156,7 @@ class VerifyPaymentView(APIView):
 
 
 # ───────────────────────────────────────────────
-# ORDER STATUS (for tracking)
+# ORDER STATUS
 # ───────────────────────────────────────────────
 class OrderStatusView(APIView):
     permission_classes = [AllowAny]
@@ -169,12 +177,12 @@ class OrderStatusView(APIView):
 
 
 # ───────────────────────────────────────────────
-# WEBHOOK (OPTIONAL)
+# WEBHOOK
 # ───────────────────────────────────────────────
 @method_decorator(csrf_exempt, name="dispatch")
 class RazorpayWebhookView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        # You can log webhook here later
+        print("Webhook received")
         return Response({"status": "received"})
