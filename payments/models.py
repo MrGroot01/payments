@@ -29,6 +29,10 @@ class Order(models.Model):
     delivery_address = models.TextField(blank=True)
     delivery_charge  = models.DecimalField(max_digits=6, decimal_places=2, default=0)
 
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+
+
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -48,6 +52,7 @@ class OrderItem(models.Model):
     quantity   = models.PositiveIntegerField(default=1)
     image      = models.URLField(blank=True)
     category   = models.CharField(max_length=50, blank=True)
+    
 
     def get_total(self):
         return self.price * self.quantity
